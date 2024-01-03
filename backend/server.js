@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import products from "./data/products.js";
+import products from "./data/products.js"; // Importing products from data/products.js in Node you must add the .js extension
 
 dotenv.config(); // Allow to load environment variables from a .env file into process.env
 
