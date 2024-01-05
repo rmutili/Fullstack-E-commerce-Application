@@ -12,7 +12,7 @@ const HeaderMenuItem = ({ url, label, icon }) => {
       textTransform="uppercase"
       mr="5"
       display="flex"
-      aligniItems="center"
+      alignItems="center"
       color="whiteAlpha.800"
       _hover={{ textDecoration: "none" }}
       mt={{ base: "2", md: 0 }}

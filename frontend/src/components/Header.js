@@ -26,7 +26,7 @@ const Header = () => {
           color="whiteAlpha.800"
           fontWeight="bold"
           size="md"
-          LetterSpacing="wide"
+          letterSpacing="wide"
         >
           RST Store
         </Heading>
