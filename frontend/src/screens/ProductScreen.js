@@ -1,7 +1,7 @@
 import { Button, Flex, Grid, Heading, Image, Text } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
 import Rating from "../components/Rating";
 import { listProductDetails } from "../actions/productActions";
 import Loader from "../components/Loader";
@@ -9,14 +9,21 @@ import Message from "../components/Message";
 
 const ProductScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
 
+  const [qty, setQty] = useState(1);
+
   useEffect(() => {
     dispatch(listProductDetails(id));
   }, [id, dispatch]);
+
+  const addToCartHandler = () => {
+    navigate(`/cart/${id}?qty=${qty}`);
+  };
 
   return (
     <>
@@ -65,6 +72,21 @@ const ProductScreen = () => {
                 {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
               </Text>
             </Flex>
+
+            {product.countInStock > 0 && (
+              <Flex justifyContent="space-between" py="2">
+                <Text>Qty: </Text>
+                <select value={qty} onChange={(e) => setQty(e.target.value)}>
+                  width="30%"
+                  {[...Array(product.countInStock).keys()].map((item) => (
+                    <option key={item + 1} value={item + 1}>
+                      {item + 1}
+                    </option>
+                  ))}
+                </select>
+              </Flex>
+            )}
+
             <Button
               bg="gray.800"
               colorScheme="teal"
@@ -72,6 +94,7 @@ const ProductScreen = () => {
               textTransform="uppercase"
               letterSpacing="wide"
               isDisabled={product.countInStock === 0}
+              onClick={addToCartHandler}
             >
               Add to cart
             </Button>
