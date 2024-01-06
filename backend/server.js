@@ -4,18 +4,21 @@ import productRoutes from "./routes/productRoutes.js"; // Importing products fro
 import connectDB from "./config/db.js";
 import colors from "colors";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config(); // Allow to load environment variables from a .env file into process.env
 
 connectDB();
 
 const app = express();
+app.use(express.json()); // Allow to accept JSON data in the body
 
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(notFound); // Middleware for 404 errors
 app.use(errorHandler); // Middleware for 500 errors
