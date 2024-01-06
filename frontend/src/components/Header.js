@@ -1,10 +1,34 @@
-import { Box, Flex, Heading, Icon, Link } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import {
+  Box,
+  Flex,
+  Heading,
+  Icon,
+  Link,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { HiShoppingBag, HiUser, HiMenu } from "react-icons/hi";
+import { IoChevronDown } from "react-icons/io5";
 import HeaderMenuItem from "./HeaderMenuItem";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+import { logout } from "../actions/userActions";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const [show, setShow] = useState(false);
   return (
     <Flex
@@ -44,10 +68,24 @@ const Header = () => {
         as="nav"
         display={{ base: show ? "none" : "block", md: "flex" }}
         width={{ base: "full", md: "auto" }}
-        mt={{ base: "2", md: "0" }}
+        mt={{ base: "3", md: "0" }}
       >
         <HeaderMenuItem icon={HiShoppingBag} label="Cart" url="/cart" />
-        <HeaderMenuItem icon={HiUser} label="Login" url="/login" />
+        {userInfo ? (
+          <Menu>
+            <MenuButton as={Button} rightIcon={<IoChevronDown />}>
+              {userInfo.name}
+            </MenuButton>
+            <MenuList>
+              <MenuItem as={RouterLink} to="/profile">
+                Profile
+              </MenuItem>
+              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+            </MenuList>
+          </Menu>
+        ) : (
+          <HeaderMenuItem icon={HiUser} label="Login" url="/login" />
+        )}
       </Box>
     </Flex>
   );
