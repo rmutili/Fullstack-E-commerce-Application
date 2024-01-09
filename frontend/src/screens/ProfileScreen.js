@@ -11,9 +11,10 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getUserDetails } from "../actions/userActions";
+import { getUserDetails, updateUserProfile } from "../actions/userActions";
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
+import { USER_DETAILS_RESET } from "../constants/userConstants";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch(); // We need to dispatch actions
@@ -31,8 +32,8 @@ const ProfileScreen = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  //   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-  //   const { success } = userUpdateProfile;
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
+  const { success } = userUpdateProfile;
 
   useEffect(() => {
     if (!userInfo) {
@@ -45,15 +46,15 @@ const ProfileScreen = () => {
         setEmail(user.email);
       }
     }
-  }, [dispatch, navigate, user, userInfo]); // We want to run this effect whenever the dispatch, navigate, user, userInfo, or success changes
+  }, [dispatch, navigate, user, userInfo, success]); // We want to run this effect whenever the dispatch, navigate, user, userInfo, or success changes
 
   const submitHandler = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
-      //   dispatch(updateUserProfile({ id: user._id, name, email, password }));
-      //   dispatch({ type: USER_DETAILS_RESET });
+      dispatch(updateUserProfile({ id: user._id, name, email, password }));
+      dispatch({ type: USER_DETAILS_RESET });
     }
   };
 

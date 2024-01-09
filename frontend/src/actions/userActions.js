@@ -10,10 +10,12 @@ import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
   USER_DETAILS_FAIL,
-  // USER_UPDATE_PROFILE_REQUEST,
-  // USER_UPDATE_PROFILE_SUCCESS,
-  // USER_UPDATE_PROFILE_FAIL,
+  USER_DETAILS_RESET,
+  USER_UPDATE_PROFILE_REQUEST,
+  USER_UPDATE_PROFILE_SUCCESS,
+  USER_UPDATE_PROFILE_FAIL,
 } from "../constants/userConstants";
+import { get } from "mongoose";
 
 // getState allows us to get our entire state tree
 export const login = (email, password) => async (dispatch) => {
@@ -117,6 +119,46 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
     // If we get an error, we want to dispatch USER_DETAILS_FAIL and set the payload to the error message
     dispatch({
       type: USER_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message, // error.response.data.message is the error message from the backend
+    });
+  }
+};
+
+export const updateUserProfile = (user) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_UPDATE_PROFILE_REQUEST });
+
+    // We want to get the user info from the state
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    // We want to send JSON data in the body, so we need to set the content type to application/json
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // We want to send the token in the headers
+      },
+    };
+
+    // We want to send a PUT request to /api/users/profile
+    const { data } = await axios.put(`/api/users/profile`, user, config);
+
+    // If we get a successful response, we want to dispatch USER_UPDATE_PROFILE_SUCCESS and set the payload to data
+    dispatch({ type: USER_UPDATE_PROFILE_SUCCESS, payload: data });
+
+    // We also want to dispatch USER_LOGIN_SUCCESS and set the payload to data so that the user is logged in immediately after updating their profile
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+    // We also want to save the user info in local storage so that the user is still logged in after refreshing the page
+    localStorage.setItem("userInfo", JSON.stringify(data));
+  } catch (error) {
+    // If we get an error, we want to dispatch USER_UPDATE_PROFILE_FAIL and set the payload to the error message
+    dispatch({
+      type: USER_UPDATE_PROFILE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

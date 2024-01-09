@@ -9,6 +9,11 @@ import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
   USER_DETAILS_FAIL,
+  USER_DETAILS_RESET,
+  USER_UPDATE_PROFILE_REQUEST,
+  USER_UPDATE_PROFILE_SUCCESS,
+  USER_UPDATE_PROFILE_FAIL,
+  USER_UPDATE_PROFILE_RESET,
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -47,6 +52,23 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
       return { loading: false, user: action.payload };
     case USER_DETAILS_FAIL: // This is dispatched from the profile screen when the user details fail to be retrieved
       return { loading: false, error: action.payload };
+    case USER_DETAILS_RESET: // This is dispatched from the profile screen when the user clicks the logout button or when the user clicks the update button
+      return { user: {} };
+    default:
+      return state;
+  }
+};
+
+export const userUpdateProfileReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_UPDATE_PROFILE_REQUEST: // This is dispatched from the profile screen when the user clicks the update button
+      return { ...state, loading: true };
+    case USER_UPDATE_PROFILE_SUCCESS: // This is dispatched from the profile screen when the user details are successfully updated
+      return { loading: false, success: true, userInfo: action.payload };
+    case USER_UPDATE_PROFILE_FAIL: // This is dispatched from the profile screen when the user details fail to be updated
+      return { loading: false, error: action.payload };
+    case USER_UPDATE_PROFILE_RESET: // This is dispatched from the profile screen when the user clicks the logout button
+      return {};
     default:
       return state;
   }
