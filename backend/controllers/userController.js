@@ -1,5 +1,5 @@
 import User from "../models/userModel.js";
-import expressAsyncHandler from "express-async-handler";
+import AsyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 
 /**
@@ -8,7 +8,7 @@ import generateToken from "../utils/generateToken.js";
  * @access  Public
  */
 
-const authUser = expressAsyncHandler(async (req, res) => {
+const authUser = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -33,7 +33,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
  * @access  Private
  */
 
-const getUserProfile = expressAsyncHandler(async (req, res) => {
+const getUserProfile = AsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -55,7 +55,7 @@ const getUserProfile = expressAsyncHandler(async (req, res) => {
  * @access  Public
  */
 
-const registerUser = expressAsyncHandler(async (req, res) => {
+const registerUser = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const userExists = await User.findOne({ email });
 
@@ -80,4 +80,42 @@ const registerUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, getUserProfile, registerUser };
+/**
+ * @desc    Update user profile
+ * @route   PUT /api/users/profile
+ * @access  Private
+ */
+
+const updateUserProfile = AsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    // If the user exists, we want to update the name and email
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+
+    // If the password is being modified, we want to hash the new password
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    // Save the updated user
+    const updatedUser = await user.save();
+
+    // Send back the updated user information
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+
+      // Generate a new token with the updated user information
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+export { authUser, getUserProfile, registerUser, updateUserProfile };
