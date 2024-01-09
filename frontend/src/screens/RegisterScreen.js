@@ -9,7 +9,6 @@ import {
   Spacer,
   Text,
 } from "@chakra-ui/react";
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,7 +17,6 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { register } from "../actions/userActions";
-
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
 
@@ -27,13 +25,13 @@ const RegisterScreen = () => {
   const navigate = useNavigate();
 
   let [searchParams] = useSearchParams();
-  let redirect = searchParams.get("redirect") || "/";
+  let redirect = searchParams.get(`redirect`) || "/";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassowrd, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState(null); // error message from the backend if there is one
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState(null);
 
   const userRegister = useSelector((state) => state.userRegister);
   const { loading, error, userInfo } = userRegister;
@@ -46,7 +44,7 @@ const RegisterScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassowrd) {
+    if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
       dispatch(register(name, email, password));
@@ -95,7 +93,7 @@ const RegisterScreen = () => {
             <Input
               id="password"
               type="password"
-              placeholder="*************"
+              placeholder="************"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -108,27 +106,21 @@ const RegisterScreen = () => {
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="*************"
-              value={confirmPassowrd}
+              placeholder="************"
+              value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </FormControl>
 
-          <Button
-            type="submit"
-            colorScheme="teal"
-            w="full"
-            mt="4"
-            isLoading={loading}
-          >
+          <Button type="submit" colorScheme="teal" mt="4" isLoading={loading}>
             Register
           </Button>
         </form>
 
         <Flex pt="10">
           <Text fontWeight="semibold">
-            Already have an account?{" "}
-            <Link as={RouterLink} to={`/login?redirect=${redirect}`}>
+            Already a Customer?{" "}
+            <Link as={RouterLink} to="/login">
               Click here to login
             </Link>
           </Text>
