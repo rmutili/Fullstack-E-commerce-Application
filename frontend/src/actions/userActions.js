@@ -7,9 +7,9 @@ import {
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
   USER_REGISTER_FAIL,
-  // USER_DETAILS_REQUEST,
-  // USER_DETAILS_SUCCESS,
-  // USER_DETAILS_FAIL,
+  USER_DETAILS_REQUEST,
+  USER_DETAILS_SUCCESS,
+  USER_DETAILS_FAIL,
   // USER_UPDATE_PROFILE_REQUEST,
   // USER_UPDATE_PROFILE_SUCCESS,
   // USER_UPDATE_PROFILE_FAIL,
@@ -90,3 +90,37 @@ export const register = (name, email, password) => async (dispatch) => {
 };
 
 // export const getUserDetails = (id) => async (dispatch, getState) => {
+
+export const getUserDetails = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_DETAILS_REQUEST });
+
+    // We want to get the user info from the state
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    // We want to send JSON data in the body, so we need to set the content type to application/json
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // We want to send the token in the headers
+      },
+    };
+
+    // We want to send a GET request to /api/users/profile
+    const { data } = await axios.get(`/api/users/profile`, config);
+
+    // If we get a successful response, we want to dispatch USER_DETAILS_SUCCESS and set the payload to data
+    dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
+  } catch (error) {
+    // If we get an error, we want to dispatch USER_DETAILS_FAIL and set the payload to the error message
+    dispatch({
+      type: USER_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message, // error.response.data.message is the error message from the backend
+    });
+  }
+};
