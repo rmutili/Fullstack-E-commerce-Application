@@ -1,6 +1,10 @@
 import axios from "axios";
 
-import { CART_ADD_ITEM, CART_REMOVE_ITEM } from "../constants/cartConstants";
+import {
+  CART_ADD_ITEM,
+  CART_REMOVE_ITEM,
+  CART_SAVE_SHIPPING_ADDRESS
+} from "../constants/cartConstants";
 
 // getState allows us to get our entire state tree
 export const addToCart = (id, qty) => async (dispatch, getState) => {
@@ -16,8 +20,8 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
       image: data.image,
       price: data.price,
       countInStock: data.countInStock,
-      qty, // Short hand syntax for qty: qty
-    },
+      qty // Short hand syntax for qty: qty
+    }
   });
 
   // save the cartItems to localStorage
@@ -30,9 +34,19 @@ export const removeFromCart = (id) => async (dispatch, getState) => {
 
   dispatch({
     type: CART_REMOVE_ITEM,
-    payload: id,
+    payload: id
   });
 
   // save the cartItems to localStorage
   localStorage.setItem("cartItems", JSON.stringify(getState().cart.cartItems));
+};
+
+export const saveShippingAddress = (data) => async (dispatch) => {
+  dispatch({
+    type: CART_SAVE_SHIPPING_ADDRESS,
+    payload: data
+  });
+
+  // save the shipping address to localStorage
+  localStorage.setItem("shippingAddress", JSON.stringify(data));
 };
