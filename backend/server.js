@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import colors from "colors";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config(); // Allow to load environment variables from a .env file into process.env
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.use(notFound); // Middleware for 404 errors
 app.use(errorHandler); // Middleware for 500 errors
