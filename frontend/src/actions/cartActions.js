@@ -3,7 +3,8 @@ import axios from "axios";
 import {
   CART_ADD_ITEM,
   CART_REMOVE_ITEM,
-  CART_SAVE_SHIPPING_ADDRESS
+  CART_SAVE_SHIPPING_ADDRESS,
+  CART_SAVE_PAYMENT_METHOD
 } from "../constants/cartConstants";
 
 // getState allows us to get our entire state tree
@@ -49,4 +50,14 @@ export const saveShippingAddress = (data) => async (dispatch) => {
 
   // save the shipping address to localStorage
   localStorage.setItem("shippingAddress", JSON.stringify(data));
+};
+
+export const savePaymentMethod = (data) => async (dispatch) => {
+  dispatch({
+    type: CART_SAVE_PAYMENT_METHOD,
+    payload: data
+  });
+
+  // save the payment method to localStorage
+  localStorage.setItem("paymentMethod", JSON.stringify(data));
 };
