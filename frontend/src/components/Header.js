@@ -8,7 +8,7 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
+  MenuItem
 } from "@chakra-ui/react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { HiShoppingBag, HiUser, HiMenu } from "react-icons/hi";

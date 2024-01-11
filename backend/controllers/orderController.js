@@ -17,7 +17,7 @@ const createOrder = AsyncHandler(async (req, res) => {
   } = req.body;
 
   // Check if orderItems array is empty
-  if (orderItems && orderItems.length === 0) {
+  if (!orderItems || (orderItems && orderItems.length === 0)) {
     res.status(400);
     throw new Error("No order items");
   } else {
@@ -41,4 +41,27 @@ const createOrder = AsyncHandler(async (req, res) => {
   }
 });
 
-export { createOrder };
+/**
+ * @desc    Get order by ID
+ * @route   GET /api/orders/:id
+ * @access  Private
+ */
+
+const getOrderById = AsyncHandler(async (req, res) => {
+  // Get order by ID
+  const order = await Order.findById(req.params.id).populate(
+    "user",
+    "name email"
+  );
+
+  // Check if order exists
+  if (order) {
+    // Send back the order
+    res.json(order);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
+
+export { createOrder, getOrderById };
