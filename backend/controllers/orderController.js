@@ -64,4 +64,38 @@ const getOrderById = AsyncHandler(async (req, res) => {
   }
 });
 
-export { createOrder, getOrderById };
+/**
+ * @desc    Update order to paid
+ * @route   PUT /api/orders/:id/pay
+ * @access  Private
+ */
+
+const updateOrderToPaid = AsyncHandler(async (req, res) => {
+  // Get order by ID
+  const order = await Order.findById(req.params.id);
+
+  // Check if order exists
+  if (order) {
+    // Update order
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.paymentResult = {
+      // Get data from PayPal
+      id: req.body.id,
+      state: req.body.state,
+      update_time: req.body.update_time,
+      email_address: req.body.email_address
+    };
+
+    // Save order to database
+    const updatedOrder = await order.save();
+
+    // Send back the updated order
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
+
+export { createOrder, getOrderById, updateOrderToPaid };
