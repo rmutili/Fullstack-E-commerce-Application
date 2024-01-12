@@ -1,11 +1,11 @@
-import AsyncHandler from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import Order from "../models/orderModel.js";
 
 // @desc    Create new order
 // @route   POST /api/orders
 // @access  Private
 
-const createOrder = AsyncHandler(async (req, res) => {
+const createOrder = asyncHandler(async (req, res) => {
   const {
     orderItems,
     shippingAddress,
@@ -47,7 +47,7 @@ const createOrder = AsyncHandler(async (req, res) => {
  * @access  Private
  */
 
-const getOrderById = AsyncHandler(async (req, res) => {
+const getOrderById = asyncHandler(async (req, res) => {
   // Get order by ID
   const order = await Order.findById(req.params.id).populate(
     "user",
@@ -70,7 +70,7 @@ const getOrderById = AsyncHandler(async (req, res) => {
  * @access  Private
  */
 
-const updateOrderToPaid = AsyncHandler(async (req, res) => {
+const updateOrderToPaid = asyncHandler(async (req, res) => {
   // Get order by ID
   const order = await Order.findById(req.params.id);
 

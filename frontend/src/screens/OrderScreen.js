@@ -1,10 +1,12 @@
 import { Box, Flex, Grid, Heading, Image, Link, Text } from "@chakra-ui/react";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { getOrderDetails } from "../actions/orderActions";
+import { getOrderDetails, payOrder } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import { ORDER_PAY_RESET } from "../constants/orderConstants";
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -12,6 +14,9 @@ const OrderScreen = () => {
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
+
+  const orderPay = useSelector((state) => state.orderPay);
+  const { loading: loadingPay, success: successPay } = orderPay;
 
   if (!loading) {
     // Calculate prices
@@ -21,8 +26,15 @@ const OrderScreen = () => {
   }
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
+    if (!order.totalPrice || successPay) {
+      dispatch({ type: ORDER_PAY_RESET });
+      dispatch(getOrderDetails(orderId));
+    }
+  }, [dispatch, orderId, order, successPay]);
+
+  const successPaymentHandler = (paymentResult) => {
+    dispatch(payOrder(orderId, paymentResult));
+  };
 
   return loading ? (
     <Loader />
@@ -75,7 +87,9 @@ const OrderScreen = () => {
               </Text>
               <Text mt="4">
                 {order.isPaid ? (
-                  <Message type="success">Paid on {order.paidAt}</Message>
+                  <Message type="success">
+                    Paid on {new Date(order.paidAt).toUTCString()}
+                  </Message>
                 ) : (
                   <Message type="warning">Not Paid</Message>
                 )}
@@ -202,6 +216,47 @@ const OrderScreen = () => {
             </Box>
 
             {/* PAYMENT BUTTON */}
+            {!order.isPaid && (
+              <Box>
+                {loadingPay ? (
+                  <Loader />
+                ) : (
+                  <PayPalScriptProvider
+                    options={{
+                      clientId:
+                        "AQMEumQ-Z3kiFCyo31l96mAg26dFJtcHz_8m6VD0HEKLtuDAxxjRzCG7kPhTQJUyHpsw5WYWwrw-8bHo",
+                      components: "buttons"
+                    }}
+                  >
+                    <PayPalButtons
+                      createOrder={(_data, actions) => {
+                        return actions.order.create({
+                          purchase_units: [
+                            {
+                              amount: {
+                                value: order.totalPrice
+                                // currency_code: "USD" // Change this to the currency you want to use on production
+                              }
+                            }
+                          ]
+                        });
+                      }}
+                      onApprove={(_data, actions) => {
+                        return actions.order.capture().then((details) => {
+                          const paymentResult = {
+                            id: details.id,
+                            status: details.status,
+                            update_time: details.update_time,
+                            email_address: details.payer.email_address
+                          };
+                          successPaymentHandler(paymentResult);
+                        });
+                      }}
+                    />
+                  </PayPalScriptProvider>
+                )}
+              </Box>
+            )}
           </Flex>
         </Grid>
       </Flex>
