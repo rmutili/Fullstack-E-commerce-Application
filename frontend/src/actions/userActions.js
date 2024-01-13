@@ -13,9 +13,13 @@ import {
   USER_DETAILS_RESET,
   USER_UPDATE_PROFILE_REQUEST,
   USER_UPDATE_PROFILE_SUCCESS,
-  USER_UPDATE_PROFILE_FAIL,
+  USER_UPDATE_PROFILE_FAIL
 } from "../constants/userConstants";
 import { get } from "mongoose";
+import {
+  ORDER_MY_LIST_RESET,
+  ORDER_PAY_RESET
+} from "../constants/orderConstants";
 
 // getState allows us to get our entire state tree
 export const login = (email, password) => async (dispatch) => {
@@ -24,8 +28,8 @@ export const login = (email, password) => async (dispatch) => {
 
     const config = {
       headers: {
-        "Content-Type": "application/json",
-      },
+        "Content-Type": "application/json"
+      }
     };
 
     const { data } = await axios.post(
@@ -43,7 +47,7 @@ export const login = (email, password) => async (dispatch) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.message, // error.response.data.message is the error message from the backend
+          : error.message // error.response.data.message is the error message from the backend
     });
   }
 };
@@ -51,6 +55,9 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   localStorage.removeItem("userInfo");
   dispatch({ type: USER_LOGOUT });
+  dispatch({ type: ORDER_MY_LIST_RESET });
+  dispatch({ type: USER_DETAILS_RESET });
+  dispatch({ type: ORDER_PAY_RESET });
 };
 
 export const register = (name, email, password) => async (dispatch) => {
@@ -60,8 +67,8 @@ export const register = (name, email, password) => async (dispatch) => {
     // We want to send JSON data in the body, so we need to set the content type to application/json
     const config = {
       headers: {
-        "Content-Type": "application/json",
-      },
+        "Content-Type": "application/json"
+      }
     };
 
     // We want to send a POST request to /api/users, and we want to send the name, email, and password in the body
@@ -86,7 +93,7 @@ export const register = (name, email, password) => async (dispatch) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.message, // error.response.data.message is the error message from the backend
+          : error.message // error.response.data.message is the error message from the backend
     });
   }
 };
@@ -99,15 +106,15 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
 
     // We want to get the user info from the state
     const {
-      userLogin: { userInfo },
+      userLogin: { userInfo }
     } = getState();
 
     // We want to send JSON data in the body, so we need to set the content type to application/json
     const config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`, // We want to send the token in the headers
-      },
+        Authorization: `Bearer ${userInfo.token}` // We want to send the token in the headers
+      }
     };
 
     // We want to send a GET request to /api/users/profile
@@ -122,7 +129,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.message, // error.response.data.message is the error message from the backend
+          : error.message // error.response.data.message is the error message from the backend
     });
   }
 };
@@ -133,15 +140,15 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
 
     // We want to get the user info from the state
     const {
-      userLogin: { userInfo },
+      userLogin: { userInfo }
     } = getState();
 
     // We want to send JSON data in the body, so we need to set the content type to application/json
     const config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`, // We want to send the token in the headers
-      },
+        Authorization: `Bearer ${userInfo.token}` // We want to send the token in the headers
+      }
     };
 
     // We want to send a PUT request to /api/users/profile
@@ -162,7 +169,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.message, // error.response.data.message is the error message from the backend
+          : error.message // error.response.data.message is the error message from the backend
     });
   }
 };
