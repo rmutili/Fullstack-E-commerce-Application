@@ -4,12 +4,13 @@ import {
   getUserProfile,
   registerUser,
   updateUserProfile,
+  getUsers
 } from "../controllers/userController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { admin, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.route("/").post(registerUser);
+router.route("/").post(registerUser).get(protect, admin, getUsers); // This will be used to register a new user
 router.route("/login").post(authUser);
 router
   .route("/profile")
