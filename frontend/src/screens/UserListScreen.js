@@ -19,20 +19,28 @@ import {
   IoTrashBinSharp
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { listUsers } from "../actions/userActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
 const UserListScreen = () => {
   const dispatch = useDispatch(); // To dispatch actions
+  const navigate = useNavigate(); // To navigate to a different URL
 
   const userList = useSelector((state) => state.userList); // To get the user list state from redux store
   const { loading, error, users } = userList; // To get the loading, error, and users from the user list state
 
+  const userLogin = useSelector((state) => state.userLogin); // To get the user login state from redux store
+  const { userInfo } = userLogin; // To get the user info from the user login state
+
   useEffect(() => {
-    dispatch(listUsers());
-  }, [dispatch]);
+    if (userInfo && userInfo.isAdmin) {
+      dispatch(listUsers());
+    } else {
+      navigate("/login");
+    }
+  }, [dispatch, navigate, userInfo]);
 
   const deleteHandler = () => {
     if (window.confirm("Are you sure?")) {
