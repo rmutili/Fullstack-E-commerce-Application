@@ -20,7 +20,7 @@ import {
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { listUsers } from "../actions/userActions";
+import { listUsers, deleteUser } from "../actions/userActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
@@ -34,17 +34,35 @@ const UserListScreen = () => {
   const userLogin = useSelector((state) => state.userLogin); // To get the user login state from redux store
   const { userInfo } = userLogin; // To get the user info from the user login state
 
+  const userDelete = useSelector((state) => state.userDelete); // To get the user delete state from redux store
+  const { success } = userDelete; // To get the success from the user delete state
+
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listUsers());
     } else {
       navigate("/login");
     }
-  }, [dispatch, navigate, userInfo]);
+  }, [dispatch, navigate, userInfo, success]);
 
-  const deleteHandler = () => {
+  //   const deleteHandler = (id) => {
+  //     if (window.confirm("Are you sure?")) {
+  //       // Delete user
+  //       dispatch(deleteUser(id));
+  //     }
+  //   };
+
+  // My Code
+  const deleteHandler = (id) => {
     if (window.confirm("Are you sure?")) {
-      // Delete user
+      // Check if the user being deleted is the currently logged-in user
+      if (userInfo && userInfo._id === id) {
+        // Display a message or prevent the deletion
+        alert("You cannot delete yourself.");
+      } else {
+        // Delete user
+        dispatch(deleteUser(id));
+      }
     }
   };
 

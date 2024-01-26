@@ -1,5 +1,5 @@
 import User from "../models/userModel.js";
-import AsyncHandler from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 
 /**
@@ -8,7 +8,7 @@ import generateToken from "../utils/generateToken.js";
  * @access  Public
  */
 
-const authUser = AsyncHandler(async (req, res) => {
+const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -33,7 +33,7 @@ const authUser = AsyncHandler(async (req, res) => {
  * @access  Private
  */
 
-const getUserProfile = AsyncHandler(async (req, res) => {
+const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -55,7 +55,7 @@ const getUserProfile = AsyncHandler(async (req, res) => {
  * @access  Public
  */
 
-const registerUser = AsyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const userExists = await User.findOne({ email });
 
@@ -86,7 +86,7 @@ const registerUser = AsyncHandler(async (req, res) => {
  * @access  Private
  */
 
-const updateUserProfile = AsyncHandler(async (req, res) => {
+const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -124,9 +124,33 @@ const updateUserProfile = AsyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 
-const getUsers = AsyncHandler(async (req, res) => {
+const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({}).select("-password");
   res.json(users);
 });
 
-export { authUser, getUserProfile, registerUser, updateUserProfile, getUsers };
+/* @desc    Delete user
+ * @route   DELETE /api/users/:id
+ * @access  Private/Admin
+ */
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    await user.deleteOne(user); // Remove the user from the database
+    res.json({ message: "User deleted" });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+export {
+  authUser,
+  getUserProfile,
+  registerUser,
+  updateUserProfile,
+  getUsers,
+  deleteUser
+};
