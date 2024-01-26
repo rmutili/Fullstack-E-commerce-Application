@@ -13,7 +13,10 @@ import {
   USER_DETAILS_RESET,
   USER_UPDATE_PROFILE_REQUEST,
   USER_UPDATE_PROFILE_SUCCESS,
-  USER_UPDATE_PROFILE_FAIL
+  USER_UPDATE_PROFILE_FAIL,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL
 } from "../constants/userConstants";
 // import { get } from "mongoose";
 import {
@@ -166,6 +169,39 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     // If we get an error, we want to dispatch USER_UPDATE_PROFILE_FAIL and set the payload to the error message
     dispatch({
       type: USER_UPDATE_PROFILE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message // error.response.data.message is the error message from the backend
+    });
+  }
+};
+
+export const listUsers = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_LIST_REQUEST });
+
+    // We want to get the user info from the state
+    const {
+      userLogin: { userInfo }
+    } = getState();
+
+    // We want to send JSON data in the body, so we need to set the content type to application/json
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}` // We want to send the token in the headers
+      }
+    };
+
+    // We want to send a GET request to /api/users
+    const { data } = await axios.get(`/api/users`, config);
+
+    // If we get a successful response, we want to dispatch USER_LIST_SUCCESS and set the payload to data
+    dispatch({ type: USER_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    // If we get an error, we want to dispatch USER_LIST_FAIL and set the payload to the error message
+    dispatch({
+      type: USER_LIST_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

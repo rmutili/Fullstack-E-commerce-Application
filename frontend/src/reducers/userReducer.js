@@ -14,6 +14,10 @@ import {
   USER_UPDATE_PROFILE_SUCCESS,
   USER_UPDATE_PROFILE_FAIL,
   USER_UPDATE_PROFILE_RESET,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_RESET
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -69,6 +73,21 @@ export const userUpdateProfileReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case USER_UPDATE_PROFILE_RESET: // This is dispatched from the profile screen when the user clicks the logout button
       return {};
+    default:
+      return state;
+  }
+};
+
+export const userListReducer = (state = { users: [] }, action) => {
+  switch (action.type) {
+    case USER_LIST_REQUEST: // This is dispatched from the user list screen when the user list screen loads
+      return { ...state, loading: true };
+    case USER_LIST_SUCCESS: // This is dispatched from the user list screen when the user list is successfully retrieved
+      return { loading: false, users: action.payload };
+    case USER_LIST_FAIL: // This is dispatched from the user list screen when the user list fails to be retrieved
+      return { loading: false, error: action.payload };
+    case USER_LIST_RESET: // This is dispatched from the user list screen when the user clicks the logout button
+      return { users: [] };
     default:
       return state;
   }
