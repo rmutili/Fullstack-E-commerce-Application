@@ -17,9 +17,9 @@ router.route("/").post(registerUser).get(protect, admin, getUsers); // This will
 router
   .route("/:id")
   .delete(protect, admin, deleteUser)
-  .put(protect, admin, updateUser).put(protect, admin, getUserById);
-  .router.route("/login")
-  .post(authUser);
+  .get(protect, admin, getUserById)
+  .put(protect, admin, updateUser);
+router.route("/login").post(authUser);
 router
   .route("/profile")
   .get(protect, getUserProfile)

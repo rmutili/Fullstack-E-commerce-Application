@@ -20,7 +20,11 @@ import {
   USER_LIST_RESET,
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
-  USER_DELETE_FAIL
+  USER_DELETE_FAIL,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_RESET
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -104,6 +108,22 @@ export const userDeleteReducer = (state = {}, action) => {
       return { loading: false, success: true };
     case USER_DELETE_FAIL: // This is dispatched from the user list screen when the user fails to be deleted
       return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userUpdateReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_UPDATE_REQUEST: // This is dispatched from the user edit screen when the user clicks the update button
+      return { ...state, loading: true };
+    case USER_UPDATE_SUCCESS: // This is dispatched from the user edit screen when the user is successfully updated
+      // return { loading: false, success: true };
+      return { loading: false, user: action.payload };
+    case USER_UPDATE_FAIL: // This is dispatched from the user edit screen when the user fails to be updated
+      return { loading: false, error: action.payload };
+    case USER_UPDATE_RESET: // This is dispatched from the user edit screen when the user clicks the logout button
+      return { user: {} };
     default:
       return state;
   }

@@ -87,6 +87,9 @@ const registerUser = asyncHandler(async (req, res) => {
  */
 
 const updateUserProfile = asyncHandler(async (req, res) => {
+  console.log("Request Payload:", req.body);
+  console.log("User ID:", req.user._id);
+
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -152,7 +155,9 @@ const deleteUser = asyncHandler(async (req, res) => {
  */
 
 const getUserById = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id).select("-password");
+  const user = await User.findById(req.params.id).select("-password"); // Exclude the password from the user object
+
+  console.log(user);
 
   if (user) {
     // If the user exists, we want to update the name and email

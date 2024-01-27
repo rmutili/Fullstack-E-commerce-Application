@@ -52,7 +52,7 @@ const ProfileScreen = () => {
     if (!userInfo) {
       navigate("/login"); // If the user is not logged in, we want to redirect them to the login page
     } else {
-      if (!user.name) {
+      if (!user || !user.name) {
         dispatch(getUserDetails()); // If the user info is not in the state, we want to dispatch getUserDetails
         dispatch(listMyOrders());
       } else {
