@@ -62,7 +62,7 @@ export const login = (email, password) => async (dispatch) => {
   }
 };
 
-export const logout = () => (dispatch) => {
+export const logout = () => async (dispatch) => {
   localStorage.removeItem("userInfo");
   dispatch({ type: USER_LOGOUT });
   dispatch({ type: ORDER_MY_LIST_RESET });
@@ -111,7 +111,7 @@ export const register = (name, email, password) => async (dispatch) => {
 
 // export const getUserDetails = (id) => async (dispatch, getState) => {
 
-export const getUserDetails = () => async (dispatch, getState) => {
+export const getUserDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_DETAILS_REQUEST });
 
@@ -128,7 +128,7 @@ export const getUserDetails = () => async (dispatch, getState) => {
     };
 
     // We want to send a GET request to /api/users/profile
-    const { data } = await axios.get(`/api/users/profile`, config);
+    const { data } = await axios.get(`/api/users/profile/${id}`, config);
     console.log(data);
 
     // If we get a successful response, we want to dispatch USER_DETAILS_SUCCESS and set the payload to data
@@ -172,7 +172,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
     // We also want to save the user info in local storage so that the user is still logged in after refreshing the page
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    // localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     // If we get an error, we want to dispatch USER_UPDATE_PROFILE_FAIL and set the payload to the error message
     dispatch({

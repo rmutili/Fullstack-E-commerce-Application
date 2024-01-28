@@ -70,16 +70,16 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
   }
 };
 
-export const userUpdateProfileReducer = (state = {}, action) => {
+export const userUpdateProfileReducer = (state = { user: {} }, action) => {
   switch (action.type) {
     case USER_UPDATE_PROFILE_REQUEST: // This is dispatched from the profile screen when the user clicks the update button
       return { ...state, loading: true };
     case USER_UPDATE_PROFILE_SUCCESS: // This is dispatched from the profile screen when the user details are successfully updated
-      return { loading: false, success: true, userInfo: action.payload };
+      return { loading: false, user: action.payload, success: true };
     case USER_UPDATE_PROFILE_FAIL: // This is dispatched from the profile screen when the user details fail to be updated
       return { loading: false, error: action.payload };
     case USER_UPDATE_PROFILE_RESET: // This is dispatched from the profile screen when the user clicks the logout button
-      return {};
+      return { user: {} };
     default:
       return state;
   }

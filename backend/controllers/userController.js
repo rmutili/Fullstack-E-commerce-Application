@@ -87,10 +87,10 @@ const registerUser = asyncHandler(async (req, res) => {
  */
 
 const updateUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
   console.log("Request Payload:", req.body);
   console.log("User ID:", req.user._id);
-
-  const user = await User.findById(req.user._id);
 
   if (user) {
     // If the user exists, we want to update the name and email
@@ -141,7 +141,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    await user.deleteOne(user); // Remove the user from the database
+    await User.deleteOne(user); // Remove the user from the database
     res.json({ message: "User deleted" });
   } else {
     res.status(404);

@@ -24,5 +24,7 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+// router.route("/profile/:id").get(protect, getUserProfile);
+router.route("/profile/:id").get(protect, getUserById);
 
 export default router;
