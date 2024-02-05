@@ -12,7 +12,10 @@ import {
   PRODUCT_DELETE_FAIL,
   PRODUCT_CREATE_REQUEST,
   PRODUCT_CREATE_SUCCESS,
-  PRODUCT_CREATE_FAIL
+  PRODUCT_CREATE_FAIL,
+  PRODUCT_UPDATE_REQUEST,
+  PRODUCT_UPDATE_SUCCESS,
+  PRODUCT_UPDATE_FAIL
 } from "../constants/productConstants";
 
 export const listProducts = () => async (dispatch) => {
@@ -103,6 +106,40 @@ export const createProduct = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: PRODUCT_CREATE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message // error.response.data.message is the error message from the backend
+    });
+  }
+};
+
+export const updateProduct = (product) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_UPDATE_REQUEST });
+    // const { data } = await axios.get(`/api/products/${id}`);
+
+    const {
+      userLogin: { userInfo }
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+        "Content-Type": "application/json"
+      }
+    };
+
+    const { data } = await axios.put(
+      `/api/products/${product._id}`,
+      product,
+      config
+    );
+
+    dispatch({ type: PRODUCT_UPDATE_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_UPDATE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
