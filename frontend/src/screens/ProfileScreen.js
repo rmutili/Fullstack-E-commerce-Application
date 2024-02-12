@@ -54,10 +54,12 @@ const ProfileScreen = () => {
       navigate("/login"); // If the user is not logged in, we want to redirect them to the login page
     } else {
       if (!user.name) {
+        console.log(userInfo._id);
         dispatch(getUserDetails(userInfo._id)); // If the user info is not in the state, we want to dispatch getUserDetails
         dispatch(listMyOrders());
       } else {
         setName(user.name); // If the user info is in the state, we want to set the name and email to the user info
+        console.log(user.email);
         setEmail(user.email);
       }
     }

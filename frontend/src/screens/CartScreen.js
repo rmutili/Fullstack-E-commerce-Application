@@ -8,7 +8,7 @@ import {
   Image,
   Link,
   Select,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { IoTrashBinSharp } from "react-icons/io5";
@@ -17,7 +17,7 @@ import {
   Link as RouterLink,
   useNavigate,
   useParams,
-  useSearchParams,
+  useSearchParams
 } from "react-router-dom";
 import { addToCart, removeFromCart } from "../actions/cartActions";
 import Message from "../components/Message";
@@ -96,7 +96,7 @@ const CartScreen = () => {
 
                     {/* Product Price */}
                     <Text fontWeight="semibold" fontSize="lg">
-                      ₹{item.price}
+                      ${item.price}
                     </Text>
 
                     {/* Quantity Select Box */}
@@ -145,7 +145,7 @@ const CartScreen = () => {
                     color="blue.600"
                     mb="4"
                   >
-                    ₹
+                    $
                     {cartItems.reduce(
                       (acc, currVal) => acc + currVal.qty * currVal.price,
                       0

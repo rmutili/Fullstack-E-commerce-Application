@@ -11,10 +11,10 @@ import {
   ORDER_PAY_FAIL,
   ORDER_MY_LIST_REQUEST,
   ORDER_MY_LIST_SUCCESS,
-  ORDER_MY_LIST_FAIL
-
-  //   ORDER_LIST_SUCCESS,
-  //   ORDER_LIST_FAIL,
+  ORDER_MY_LIST_FAIL,
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_SUCCESS,
+  ORDER_LIST_FAIL
   //   ORDER_DELIVER_REQUEST,
   //   ORDER_DELIVER_SUCCESS,
   //   ORDER_DELIVER_FAIL
@@ -133,6 +133,35 @@ export const listMyOrders = () => async (dispatch, getState) => {
     console.log(error);
     dispatch({
       type: ORDER_MY_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+    });
+  }
+};
+
+export const listOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_LIST_REQUEST });
+
+    const {
+      userLogin: { userInfo }
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`
+      }
+    };
+
+    const { data } = await axios.get(`/api/orders`, config);
+
+    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: ORDER_LIST_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
