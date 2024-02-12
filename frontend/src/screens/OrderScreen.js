@@ -1,12 +1,28 @@
-import { Box, Flex, Grid, Heading, Image, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Grid,
+  Heading,
+  Image,
+  Link,
+  Text,
+  Button
+} from "@chakra-ui/react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { getOrderDetails, payOrder } from "../actions/orderActions";
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder
+} from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { ORDER_PAY_RESET } from "../constants/orderConstants";
+import {
+  ORDER_DELIVER_RESET,
+  ORDER_PAY_RESET
+} from "../constants/orderConstants";
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -18,6 +34,12 @@ const OrderScreen = () => {
   const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
 
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   if (!loading) {
     // Calculate prices
     order.itemsPrice = order.orderItems
@@ -26,14 +48,19 @@ const OrderScreen = () => {
   }
 
   useEffect(() => {
-    if (!order.totalPrice || successPay) {
+    if (!order.totalPrice || successPay || successDeliver) {
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(orderId));
     }
-  }, [dispatch, orderId, order, successPay]);
+  }, [dispatch, orderId, order, successPay, successDeliver]);
 
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(orderId, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (
@@ -69,7 +96,7 @@ const OrderScreen = () => {
               <Text mt="4">
                 {order.isDelivered ? (
                   <Message type="success">
-                    Delivered on {order.deliveredAt}
+                    Delivered on {new Date(order.deliveredAt).toUTCString()}
                   </Message>
                 ) : (
                   <Message type="warning">Not Delivered</Message>
@@ -257,6 +284,20 @@ const OrderScreen = () => {
                 )}
               </Box>
             )}
+            {/* ORDER DELIVER BUTTON */}
+            {loadingDeliver && <Loader />}
+            {userInfo &&
+              userInfo.isAdmin &&
+              order.isPaid &&
+              !order.isDelivered && (
+                <Button
+                  type="button"
+                  colorScheme="teal"
+                  onClick={deliverHandler}
+                >
+                  Mark as delivered
+                </Button>
+              )}
           </Flex>
         </Grid>
       </Flex>
