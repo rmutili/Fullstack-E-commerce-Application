@@ -81,6 +81,12 @@ const Header = () => {
               <MenuItem as={RouterLink} to="/profile">
                 Profile
               </MenuItem>
+              <MenuItem as={RouterLink} to="/admin/userlist">
+                Users
+              </MenuItem>
+              <MenuItem as={RouterLink} to="/admin/productlist">
+                Products
+              </MenuItem>
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>
             </MenuList>
           </Menu>
