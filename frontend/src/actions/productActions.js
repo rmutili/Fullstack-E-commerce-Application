@@ -15,7 +15,11 @@ import {
   PRODUCT_CREATE_FAIL,
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_UPDATE_SUCCESS,
-  PRODUCT_UPDATE_FAIL
+  PRODUCT_UPDATE_FAIL,
+  PRODDUCT_REVIEW_CREATE_REQUEST,
+  PRODDUCT_REVIEW_CREATE_SUCCESS,
+  PRODDUCT_REVIEW_CREATE_FAIL,
+  PRODDUCT_REVIEW_CREATE_RESET
 } from "../constants/productConstants";
 
 export const listProducts = () => async (dispatch) => {
@@ -147,3 +151,34 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     });
   }
 };
+
+export const createProductReview =
+  (productId, review) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: PRODDUCT_REVIEW_CREATE_REQUEST });
+      // const { data } = await axios.get(`/api/products/${id}`);
+
+      const {
+        userLogin: { userInfo }
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json"
+        }
+      };
+
+      await axios.post(`/api/products/${productId}/reviews`, review, config);
+
+      dispatch({ type: PRODDUCT_REVIEW_CREATE_SUCCESS });
+    } catch (error) {
+      dispatch({
+        type: PRODDUCT_REVIEW_CREATE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message // error.response.data.message is the error message from the backend
+      });
+    }
+  };
