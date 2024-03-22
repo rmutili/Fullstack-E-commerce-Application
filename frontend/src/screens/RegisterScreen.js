@@ -7,16 +7,16 @@ import {
   Input,
   Link,
   Spacer,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Link as RouterLink,
   useNavigate,
-  useSearchParams,
+  useSearchParams
 } from "react-router-dom";
-import { register } from "../actions/userActions";
+import { register, listUsers } from "../actions/userActions";
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
 
@@ -42,12 +42,21 @@ const RegisterScreen = () => {
     }
   }, [navigate, userInfo, redirect]);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
-      dispatch(register(name, email, password));
+      dispatch(register(name, email, password))
+        .then(() => {
+          // Call listUsers action to update the userList store after successful registration
+          dispatch(listUsers());
+        })
+        .catch((error) => {
+          // Handle any errors from register action
+          // You can display an error message or perform any other action here
+          console.error("Error registering user:", error);
+        });
     }
   };
 
